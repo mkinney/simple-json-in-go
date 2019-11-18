@@ -3,6 +3,7 @@ package main
 import (
 	"time"
 	"log"
+	"os"
 	"io/ioutil"
 	"testing"
 	"strings"
@@ -37,11 +38,15 @@ func ErrorContains(out error, want string) bool {
 func TestDecodeMissingFile(t *testing.T) {
 	// do not output expected errors
 	log.SetOutput(ioutil.Discard)
+
 	// missing.json should not exist
 	_, err := decode("missing.json")
 	if !ErrorContains(err, "no such file or directory") {
 		t.Errorf("unexpected error: %v", err)
 	}
+
+	// if you want to "reset" output
+	log.SetOutput(os.Stdout)
 }
 
 func TestDecodeInvalidJson(t *testing.T) {
