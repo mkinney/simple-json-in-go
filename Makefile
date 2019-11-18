@@ -12,3 +12,6 @@ cover:
 
 both:
 	go test -v -cover
+
+parallel:
+	go test -v -short -parallel 3
