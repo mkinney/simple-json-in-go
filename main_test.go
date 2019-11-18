@@ -2,6 +2,8 @@ package main
 
 import (
 	"time"
+	"log"
+	"io/ioutil"
 	"testing"
 	"strings"
 )
@@ -32,9 +34,22 @@ func ErrorContains(out error, want string) bool {
 	return strings.Contains(out.Error(), want)
 }
 
-func TestDecodeInvalidFile(t *testing.T) {
-	_, err := decode("not_really_a_file.json")
+func TestDecodeMissingFile(t *testing.T) {
+	// do not output expected errors
+	log.SetOutput(ioutil.Discard)
+	// missing.json should not exist
+	_, err := decode("missing.json")
 	if !ErrorContains(err, "no such file or directory") {
+		t.Errorf("unexpected error: %v", err)
+	}
+}
+
+func TestDecodeInvalidJson(t *testing.T) {
+	// do not output expected errors
+	log.SetOutput(ioutil.Discard)
+	// invalid.json should exist
+	_, err := decode("invalid.json")
+	if !ErrorContains(err, "invalid character") {
 		t.Errorf("unexpected error: %v", err)
 	}
 }
@@ -52,6 +67,24 @@ func TestUnmarshal(t *testing.T) {
 	}
 }
 
+func TestUnmarshalMissingFile(t *testing.T) {
+	// do not output expected errors
+	log.SetOutput(ioutil.Discard)
+	// missing.json should not exist
+	_, err := unmarshal("missing.json")
+	if !ErrorContains(err, "no such file or directory") {
+		t.Errorf("unexpected error: %v", err)
+	}
+}
+
+func TestUnmarshalInvalidJson(t *testing.T) {
+	// do not output expected errors
+	log.SetOutput(ioutil.Discard)
+	_, err := unmarshal("invalid.json")
+	if !ErrorContains(err, "invalid character") {
+		t.Errorf("unexpected error: %v", err)
+	}
+}
 
 func TestEncode(t *testing.T) {
 	t.Skip("Skipping encoding for now")

@@ -4,7 +4,7 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
+	"log"
 	"io/ioutil"
 	"os"
 )
@@ -30,14 +30,14 @@ type Comment struct {
 func decode(filename string) (post Post, err error) {
 	jsonFile, err := os.Open(filename)
 	if err != nil {
-		fmt.Println("Error opening JSON file:", err)
+		log.Println("Error opening JSON file:", err)
 		return
 	}
 	defer jsonFile.Close()
 	decoder := json.NewDecoder(jsonFile)
 	err = decoder.Decode(&post)
 	if err != nil {
-		fmt.Println("Error decoding JSON:", err)
+		log.Println("Error decoding JSON:", err)
 		return
 	}
 	return
@@ -46,23 +46,31 @@ func decode(filename string) (post Post, err error) {
 func unmarshal(filename string) (post Post, err error) {
 	jsonFile, err := os.Open(filename)
 	if err != nil {
-		fmt.Println("Error opening JSON file:", err)
+		log.Println("Error opening JSON file:", err)
 		return
 	}
 	defer jsonFile.Close()
 
 	jsonData, err := ioutil.ReadAll(jsonFile)
 	if err != nil {
-		fmt.Println("Error reading JSON data:", err)
+		log.Println("Error reading JSON data:", err)
 		return
 	}
-	json.Unmarshal(jsonData, &post)
+	err = json.Unmarshal(jsonData, &post)
+	if err != nil {
+		log.Println("Error unmarshaling JSON:", err)
+		return
+	}
 	return
 }
 
 func main() {
 	_, err := decode("post.json")
 	if err != nil {
-		fmt.Println("Error:", err)
+		log.Println("Error:", err)
+	}
+	_, err = unmarshal("invalid.json")
+	if err != nil {
+		log.Println("Error:", err)
 	}
 }
