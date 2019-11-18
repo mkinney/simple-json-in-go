@@ -4,6 +4,9 @@ run:
 test:
 	go test -v
 
+short:
+	go test -v -short
+
 cover:
 	go test -cover
 
